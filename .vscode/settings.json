@@ -1,6 +1,8 @@
 {
-    "eslint.alwaysShowStatus": true,
-    "eslint.format.enable": true,
-    "eslint.lintTask.enable": true,
-    "eslint.packageManager": "yarn"
+  "eslint.alwaysShowStatus": true,
+  "eslint.format.enable": true,
+  "eslint.lintTask.enable": true,
+  "eslint.packageManager": "yarn",
+  "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescriptreact]": { "editor.defaultFormatter": "esbenp.prettier-vscode" }
 }
