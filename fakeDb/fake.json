@@ -13,11 +13,24 @@
       "type": "cpu"
     },
     {
-      "id": "aa0c86fa",
+      "id": "aa0c86fd",
       "name": "Room Amsterdam",
       "owner": "lqcflVIEANZWYkmAAADD",
       "type": "human"
     }
   ],
-  "users": []
+  "users": [
+    {
+      "id": "yBsBZKYugdrhAckCAAAD",
+      "name": "gsma",
+      "room": "Room Izmir CPU",
+      "roomType": "cpu"
+    },
+    {
+      "id": "pzGCRDjcASt66jMyAAAD",
+      "name": "taley",
+      "room": "",
+      "roomType": "cpu"
+    }
+  ]
 }

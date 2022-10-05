@@ -1,12 +1,17 @@
 import express from "express";
 import * as http from "http";
-import SocketIO from "socket.io";
+import { Server } from "socket.io";
 
 import APIService from "./api.service";
 
 const port = 8082;
 const server = http.createServer(express);
-const io = SocketIO(server);
+const io = new Server(server, {
+  cors: {
+    origin: ["http://localhost:3000"],
+    credentials: true,
+  },
+});
 const apiService = new APIService();
 
 enum GameState {
@@ -41,7 +46,7 @@ io.on("connection", (socket) => {
           room: room,
         });
         if (roomType !== "cpu") {
-          socket.broadcast.to(room).emit("message", {
+          socket.to(room).emit("message", {
             user: username,
             message: `has joined ${room}`,
             room: room,
@@ -50,14 +55,13 @@ io.on("connection", (socket) => {
 
         /* Check the room with how many socket is connected */
         const maxRoomSize = roomType === "cpu" ? 1 : 2;
-        socket.join(room, () => {
-          if (
-            io.nsps["/"].adapter.rooms[room] &&
-            io.nsps["/"].adapter.rooms[room]?.length === maxRoomSize
-          ) {
-            io.to(room).emit("onReady", { state: true });
-          }
-        });
+        socket.join(room);
+        if (
+          io.of("/").adapter.rooms.has(room) &&
+          io.of("/").adapter.rooms.get(room)?.size === maxRoomSize
+        ) {
+          io.to(room).emit("onReady", { state: true });
+        }
       })
       .catch((err) => {
         socket.emit("error", { message: err });
@@ -75,15 +79,14 @@ io.on("connection", (socket) => {
         });
 
         socket.broadcast.emit("activateYourTurn", {
-          user: io.nsps["/"].adapter.rooms[result?.data.room]
-            ? Object.keys(
-                io.nsps["/"].adapter.rooms[result?.data.room].sockets
-              )[0]
+          user: io.of("/").adapter.rooms.has(result?.data.room)
+            ? io.of("/").adapter.rooms.get(result?.data.room)?.keys[0]
             : null,
           state: GameState.PLAY,
         });
       })
       .catch((err) => {
+        console.log(err);
         socket.emit("error", { message: err });
       });
   });
@@ -177,7 +180,7 @@ io.on("connection", (socket) => {
   });
 
   /* OnDisconnet clear all login and room data from the connected socket */
-  socket.on("disconnect", () => {
+  socket.on("disconnect", (s) => {
     apiService.getUserDetail(socket.id).then((result) => {
       socket.broadcast.to(result?.data.room).emit("onReady", { state: false });
       apiService.removeUserFromRoom(socket.id).then(() => {
