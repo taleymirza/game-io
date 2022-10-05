@@ -1,4 +1,4 @@
-# Scoober Frontend Challenge Server Side
+# Frontend Challenge Server Side
 
 ![](https://img.shields.io/badge/Code-NodeJs-informational?style=flat&logo=Node.js&logoColor=white&color=2bbc8a)
 ![](https://img.shields.io/badge/Code-Typescript-informational?style=flat&logo=typescript&logoColor=white&color=2bbc8a)
